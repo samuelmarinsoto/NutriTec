@@ -1,41 +1,61 @@
-% Importing the database containing facts about meals, diets, and ailments
+% Importing the knowledge base
 :- consult('db.pl').
 
-% Recommends a daily meal plan based on activity level, ailment, and diet type
-recomendar_plan_diario(NivelActividad, Ailamiento, TipoDieta, Calorias) :-
-    % Find breakfast options
-    comida(DesayunoID, desayuno, Calorias, NivelesActividad, TiposDieta, Ailamientos, Desayuno),
-    member(NivelActividad, NivelesActividad),
-    member(TipoDieta, TiposDieta),
-    member(Ailamiento, Ailamientos),
-    format('desayuno: ~w~n', [Desayuno]),
+% Match activity levels based on input
+match_activity([], _).
+match_activity([Single|_], Niveles) :-
+    member(Single, Niveles), !.
+match_activity([First|Rest], Niveles) :-
+    member(First, Niveles), !;
+    match_activity(Rest, Niveles).
 
-    % Find morning snack options
-    comida(MeriendaMananaID, merienda, Calorias, NivelesActividadMerienda, TiposDietaMerienda, AilamientosMerienda, MeriendaManana),
-    member(NivelActividad, NivelesActividadMerienda),
-    member(TipoDieta, TiposDietaMerienda),
-    member(Ailamiento, AilamientosMerienda),
-    format('merienda: ~w~n', [MeriendaManana]),
+% Match conditions based on input
+match_condition(_, []) :- !.
+match_condition(Padecimientos, PadecimientosList) :-
+    (   var(Padecimientos)
+    ->  true
+    ;   (   is_list(Padecimientos)
+        ->  forall(member(Padecimiento, Padecimientos), member(Padecimiento, PadecimientosList))
+        ;   member(Padecimientos, PadecimientosList)
+        )
+    ).
 
-    % Find lunch options
-    comida(AlmuerzoID, almuerzo, Calorias, NivelesActividadAlmuerzo, TiposDietaAlmuerzo, AilamientosAlmuerzo, Almuerzo),
-    member(NivelActividad, NivelesActividadAlmuerzo),
-    member(TipoDieta, TiposDietaAlmuerzo),
-    member(Ailamiento, AilamientosAlmuerzo),
-    format('almuerzo: ~w~n', [Almuerzo]),
+% Match diet types based on input
+match_diet(_, []) :- !.
+match_diet(TiposDieta, TiposList) :-
+    (   var(TiposDieta)
+    ->  true
+    ;   (   is_list(TiposDieta)
+        ->  forall(member(Tipo, TiposDieta), member(Tipo, TiposList))
+        ;   member(TiposDieta, TiposList)
+        )
+    ).
 
-    % Find afternoon snack options
-    comida(MeriendaTardeID, merienda, Calorias, NivelesActividadMeriendaTarde, TiposDietaMeriendaTarde, AilamientosMeriendaTarde, MeriendaTarde),
-    member(NivelActividad, NivelesActividadMeriendaTarde),
-    member(TipoDieta, TiposDietaMeriendaTarde),
-    member(Ailamiento, AilamientosMeriendaTarde),
-    format('merienda: ~w~n', [MeriendaTarde]),
+% Find meals of the specified type while checking conditions and summing calories
+find_meal(MealType, NivelesActividad, Padecimientos, TiposDieta, Calorias, Descripcion) :-
+    comida(Meal, Calorias, MealType, Niveles, Tipos, PadecimientosList, Descripcion),
+    format('Trying meal: ~w~n', [Meal]),
+    format('Calories: ~w, Description: ~w~n', [Calorias, Descripcion]),
+    match_activity(NivelesActividad, Niveles),
+    match_condition(Padecimientos, PadecimientosList),
+    match_diet(TiposDieta, Tipos).
 
-    % Find dinner options
-    comida(CenaID, cena, Calorias, NivelesActividadCena, TiposDietaCena, AilamientosCena, Cena),
-    member(NivelActividad, NivelesActividadCena),
-    member(TipoDieta, TiposDietaCena),
-    member(Ailamiento, AilamientosCena),
-    format('cena: ~w~n', [Cena]),
+% Generate the daily meal plan based on input parameters
+plan_diario(NivelesActividad, Padecimientos, TiposDieta, MinCalorias, MaxCalorias) :-
+    find_meal(desayuno, NivelesActividad, Padecimientos, TiposDieta, BreakfastCalories, BreakfastDescripcion),
+    find_meal(merienda_manana, NivelesActividad, Padecimientos, TiposDieta, MorningSnackCalories, MorningSnackDescripcion),
+    find_meal(almuerzo, NivelesActividad, Padecimientos, TiposDieta, LunchCalories, LunchDescripcion),
+    find_meal(merienda_tarde, NivelesActividad, Padecimientos, TiposDieta, AfternoonSnackCalories, AfternoonSnackDescripcion),
+    find_meal(cena, NivelesActividad, Padecimientos, TiposDieta, DinnerCalories, DinnerDescripcion),
 
-    !.  % Cut to prevent backtracking once a plan is found
+    TotalCalorias is BreakfastCalories + MorningSnackCalories + LunchCalories + AfternoonSnackCalories + DinnerCalories,
+    
+    format('Total Calories for the meal plan: ~w~n', [TotalCalorias]),
+    TotalCalorias >= MinCalorias,
+    TotalCalorias =< MaxCalorias,
+    
+    format('Breakfast: ~w~n', [BreakfastDescripcion]),
+    format('Morning Snack: ~w~n', [MorningSnackDescripcion]),
+    format('Lunch: ~w~n', [LunchDescripcion]),
+    format('Afternoon Snack: ~w~n', [AfternoonSnackDescripcion]),
+    format('Dinner: ~w~n', [DinnerDescripcion]).
