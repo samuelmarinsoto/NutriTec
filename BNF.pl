@@ -8,11 +8,11 @@ start([hola]).
 start(['Hola']).
 start([iniciar]).
 start([buenos, dias]).
-start(['Buenos', 'dias']).
+start(['Buenos', dias]).
 start([buenas, tardes]).
-start(['Buenas', 'tardes']).
+start(['Buenas', tardes]).
 start([buenas, noches]).
-start(['Buenas', 'noches']).
+start(['Buenas', noches]).
 start([nutritec]).
 
 %Finalizacion de conversacion con bot
@@ -36,10 +36,14 @@ afirm(['Si'|X],X).
 
 determinante([yo|X],X).
 determinante(['Yo'|X],X).
-determinante([lo|X],X).
-determinante(['Lo'|X],X).
-determinante([yo,lo|X],X).
-determinante(['Yo',lo|X],X).
+determinante([la|X],X).
+determinante(['La'|X],X).
+determinante([el|X],X).
+determinante(['El'|X],X).
+determinante([una|X],X).
+determinante(['Una'|X],X).
+determinante([un|X],X).
+determinante(['Un'|X],X).
 
 % Cualquier nombre de cualquier cosa que esté en la oración.
 
@@ -62,33 +66,31 @@ verbo(['Tengo'|X],X).
 verbo(['Siento'|X],X).
 verbo(['Estoy'|X],X).
 verbo(['Necesito'|X],X).
-verbo(['Me', 'diagnosticaron'|X],X).
-verbo(['Me','gustaria'|X],X).
-
-
-
-
+verbo(['Me', diagnosticaron|X],X).
+verbo(['Me', gustaria|X],X).
 
 
 % Aquí, se chequea si la oración tiene la estructura de una oración, primero un sujeto y luego un predicado. Sino, que tenga un predicado con un verbo que reemplace al sujeto.
 
 oracion(X, Y):- sintagma_nominal(X,A), sintagma_verbal(A,Y).
-oracion(X, Y):- sintagma_verbal(X,Y).
+oracion(X, Y):- sintagma_verbal_2(X,Y).
 
 %Se chequea el sujeto de la oración
 
 sintagma_nominal(X,Y):- determinante(X,A), nombre(A,Y).
 sintagma_nominal(X,Y):- determinante(X,A).
 
-%Se chequea el predicado de la oración.
+%Se chequea el predicado de la oración si esta tiene un sujeto previo.
 
 sintagma_verbal(X,Y):- verbo(X,Y).
 sintagma_verbal(X,Y):- verbo(X,A), sintagma_nominal(A,Y).
 
+%Se chequea el predicado de la oración si esta tiene un sujeto previo.
+sintagma_verbal_2(X,Y):- verbo(X,A), sintagma_nominal(A,Y).
 
 verificar_oracion(Oracion) :- oracion(Oracion, []), !.
 
 verificar_oracion(Oracion) :-
-    nl, writeln('Lo siento, no entendí lo que quisiste escribir.'), !,
+    nl, writeln('Lo siento, no entendí lo que quiso escribir.'), !,
     input_a_lista(NuevaOracion),
     verificar_oracion(NuevaOracion).
