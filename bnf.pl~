@@ -2,6 +2,36 @@
 
 % Sección que contiene la clasificación de palabras según su función en la oración escrita.
 
+
+%Comienzo de conversacion con bot
+start([hola]).
+start(['Hola']).
+start([iniciar]).
+start([buenos, dias]).
+start(['Buenos', dias]).
+start([buenas, tardes]).
+start(['Buenas', tardes]).
+start([buenas, noches]).
+start(['Buenas', noches]).
+start([nutritec]).
+
+%Finalizacion de conversacion con bot
+end([gracias]).
+end([muchas, gracias]).
+end([adios]).
+end([chao]).
+end([hasta, luego]).
+
+%Respuesta negatoria
+neg([no|X],X).
+neg(['No'|X],X).
+neg([nada|X],X).
+neg(['Nada'|X],X).
+
+%Respuesta afirmatoria
+afirm([si|X],X).
+afirm(['Si'|X],X).
+
 % Sección que evalúa los posibles determinantes que puede usar la oración, en este nutritec, chequea si el usuario está hablando en primera persona singular.
 
 determinante([yo|X],X).
@@ -24,14 +54,19 @@ verbo([estoy|X],X).
 verbo([necesito|X],X).
 verbo([ocupo|X],X).
 verbo([me,gustaria|X],X).
+verbo([diagnosticado|X],X).
+verbo([me, diagnosticaron|X],X).
 
 verbo(['Quiero'|X],X).
 verbo(['Tengo'|X],X).
 verbo(['Siento'|X],X).
 verbo(['Estoy'|X],X).
 verbo(['Necesito'|X],X).
-verbo([ocupo|X],X).
-verbo([me,gustaria|X],X).
+verbo(['Me', diagnosticaron|X],X).
+verbo(['Me',gustaria|X],X).
+
+
+
 
 
 

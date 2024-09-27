@@ -8,11 +8,11 @@ start([hola]).
 start(['Hola']).
 start([iniciar]).
 start([buenos, dias]).
-start(['Buenos', dias]).
+start(['Buenos', 'dias']).
 start([buenas, tardes]).
-start(['Buenas', tardes]).
+start(['Buenas', 'tardes']).
 start([buenas, noches]).
-start(['Buenas', noches]).
+start(['Buenas', 'noches']).
 start([nutritec]).
 
 %Finalizacion de conversacion con bot
@@ -62,8 +62,8 @@ verbo(['Tengo'|X],X).
 verbo(['Siento'|X],X).
 verbo(['Estoy'|X],X).
 verbo(['Necesito'|X],X).
-verbo(['Me', diagnosticaron|X],X).
-verbo(['Me',gustaria|X],X).
+verbo(['Me', 'diagnosticaron'|X],X).
+verbo(['Me','gustaria'|X],X).
 
 
 
