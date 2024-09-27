@@ -1,4 +1,4 @@
-% 8 padecimientos
+% 8 padecimientos (poner en un comment
 padecimiento(dislipidemia, "Problemas de colesterol elevado").
 padecimiento(hipercolesterolemia, "Colesterol alto").
 padecimiento(hipertension, "Alta presión arterial").
@@ -8,24 +8,34 @@ padecimiento(obesidad, "Exceso de peso").
 padecimiento(desnutricion, "Deficiencia de nutrientes").
 padecimiento(celiaquia, "Intolerancia al gluten").
 
-% 12 tipos de dietas
+% 4 tipos de dietas
 tipo_dieta(keto).
 tipo_dieta(proteica).
 tipo_dieta(vegetariana).
 tipo_dieta(alcalina).
-tipo_dieta(vegana).
-tipo_dieta(low_carb).
-tipo_dieta(mediterranea).
-tipo_dieta(paleo).
-tipo_dieta(baja_en_grasas).
-tipo_dieta(sin_gluten).
-tipo_dieta(dash).
-tipo_dieta(flexitariana).
 
 % 3 niveles de actividad
 nivel_actividad(inicial, "0-2 veces por semana").
 nivel_actividad(intermedio, "3-4 veces por semana").
 nivel_actividad(avanzado, "5 o más veces por semana").
+
+% cantidades de calorias
+calorias(['1200']).
+calorias(['1400']).
+calorias(['1600']).
+calorias(['1800']).
+calorias(['2000']).
+calorias(['2200']).
+calorias(['2400']).
+calorias(['2600']).
+calorias(['2800']).
+calorias(['3000']).
+calorias(['3200']).
+calorias(['3400']).
+
+
+
+% Una gran cantidad de posibilidades de dietas.
 
 % 5 desayunos
 comida(desayuno1, desayuno, 'calorias', [inicial, intermedio], [baja_en_grasas, vegetariana], [hipercolesterolemia, hipertension],
