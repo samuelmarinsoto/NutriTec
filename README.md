@@ -43,27 +43,26 @@ La vara es sacarle `TiposDieta`, `Padecimientos`, y `NivelesActividad` al usuari
       * [ ] `Que`
       * [ ] `Cual`
       * [ ] `Por que`  
-  * [ ] `TiposDietas` (12 tipos)
-    * [ ] `Keto`
-    * [ ] `Proteica`
-    * [ ] `Vegetariana`
-    * [ ] `Alcalina`
-    * [ ] etc.
-  * [ ] `Padecimientos` (12 tipos)
-    * [ ] `Dislipidemia` “Problemas del control del colesterol” “Dieta baja en grasas”
-    * [ ] `Hipercolesterolemia` “aumento de los niveles considerados normales de colesterol en la sangre” “Dieta vegana”
-    * [ ] etc.
-  * [ ] `NivelesActividad` (ejercicio)
-    * [ ] `Inicial` (0-2 veces)
-    * [ ] `Intermedio` (3-4 veces)
-    * [ ] `Avanzado` (5 ó más veces)
-  * [ ] `Dietas` (12 dietas diferentes)
-    * [ ] `NombreDieta`
-    * [ ] `TipoDieta`
-    * [ ] `Calorías`
-    * [ ] `padecimientos NO recomendados`
-    * [ ] `padecimiento recomendados`
-    * [ ] `Actividades NO recomendadas`
-    * [ ] `Actividades recomendadas`
-    * [ ] `Detalle Dieta`
+  * [x] `TiposDietas` (12 tipos)
+    * [x] `Keto`
+    * [x] `Proteica`
+    * [x] `Vegetariana`
+    * [x] `Alcalina`
+    * [x] etc.
+  * [x] `Padecimientos` (12 tipos)
+    * [x] `Dislipidemia` “Problemas del control del colesterol” “Dieta baja en grasas”
+    * [x] `Hipercolesterolemia` “aumento de los niveles considerados normales de colesterol en la sangre” “Dieta vegana”
+    * [x] etc.
+  * [x] `NivelesActividad` (ejercicio)
+    * [x] `Inicial` (0-2 veces)
+    * [x] `Intermedio` (3-4 veces)
+    * [x] `Avanzado` (5 ó más veces)
+  * [X] `Comidas` (25 comidas diferentes)
+    * [x] `Nombre`
+    * [x] `TipoDietas`
+    * [x] `TiempoComida` (almuerzo, cena, etc.)
+    * [x] `Calorías`
+    * [x] `padecimientos permitidos`
+    * [x] `NivelActividad`
+    * [x] `Detalle Dieta`
 * [ ] Documentación
