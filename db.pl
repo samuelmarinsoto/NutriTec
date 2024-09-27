@@ -1,12 +1,12 @@
 % 8 padecimientos
-padecimiento(dislipidemia, "Problemas de colesterol elevado").
-padecimiento(hipercolesterolemia, "Colesterol alto").
-padecimiento(hipertension, "Alta presión arterial").
-padecimiento(diabetes_tipo1, "Diabetes tipo 1").
-padecimiento(diabetes_tipo2, "Diabetes tipo 2").
-padecimiento(obesidad, "Exceso de peso").
-padecimiento(desnutricion, "Deficiencia de nutrientes").
-padecimiento(celiaquia, "Intolerancia al gluten").
+padecimiento(dislipidemia).
+padecimiento(hipercolesterolemia).
+padecimiento(hipertension).
+padecimiento(diabetes_tipo1).
+padecimiento(diabetes_tipo2).
+padecimiento(obesidad).
+padecimiento(desnutricion).
+padecimiento(celiaquia).
 
 % 12 tipos de dietas
 tipo_dieta(keto).
