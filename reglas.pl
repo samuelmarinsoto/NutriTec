@@ -155,6 +155,8 @@ compareTipoDieta(X, TipoDieta) :-
         preguntar_tipo_dieta(TipoDieta)  
     ).
 
+compareDespedida(X) :-
+
 % Listas para validar las entradas
 listaTipoDePadecimientos(L) :- findall(X, padecimiento(X), L).
 listaFrecuencia(L) :- findall(X, nivel_actividad(X, _), L).
@@ -194,7 +196,24 @@ preguntar_tipo_dieta(TipoDieta) :-
     nl, writeln('Que tipo de dieta prefieres? (Ejemplo: vegetariana)'),
     input_string(Respuesta),
     compareTipoDieta(Respuesta, TipoDieta).
+    
+detectar_despedida :-
+	input_string(Respuesta),
+	(compareDespedida(Respuesta) % true si usuario quiere salir, false si no
+	-> nl, writeln('Entendido, hasta luego!')
+	; inicio()
+	).
 
+detectar_saludo :-
+	input_string(Respuesta),
+	(compareSaludo(Respuesta) % true si usuario esta saludando inicia funcion, false cicla esperando una respuesta
+	-> nl, writeln('Bienvenido a NutriTEC! En que le podemos ayudar hoy?'),
+	input_string(MeValeGorra),
+	nl, writeln('Claro, con gusto le ayudaremos con eso. Le recomendaremos una dieta que se ajuste a sus necesidades. Para seguir, cuentenos un poco de usted.'),
+	ingresar_datos(_, _, _, _, _, _, _)
+	; nl, writeln('Disculpe, no le logre entender. Puede replantear su peticion?'), detectar_saludo()
+	).
+	
 % Regla de ingreso de datos y ejecucion del flujo
 % Hace preguntas al usuario para extraer informacion de el o ella, y hace una consulta con la regla plan_diario/5
 % para obtener un plan diario adecuado.
@@ -202,10 +221,6 @@ preguntar_tipo_dieta(TipoDieta) :-
 % Output: plan diario de dieta
 % Debug: descomentar format/2 para ver respuestas obtenidas del usuario que pasaran a la regla plan_diario/5
 ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia, TipoDieta, MenuDieta) :-
-
-    nl, writeln('Bienvenido a NutriTEC! En que le podemos ayudar hoy?'),
-	input_string(MeValeGorra),
-	nl, writeln('Claro, con gusto le ayudaremos con eso. Le recomendaremos una dieta que se ajuste a sus necesidades. Para seguir, cuentenos un poco de usted.'),
 	
     % Preguntar sobre el padecimiento
     preguntar_padecimiento(Padecimientos),
@@ -224,10 +239,14 @@ ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia,
 
 	%format('~w, ~w, ~w, ~w, ~w~n', [Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta]),
     % Buscar dieta en base de datos
-	( plan_diario(Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta)
-	-> nl, writeln('Gracias por usar NutriTec! Si necesita mas ayuda, corra inicio(). Esperamos verlo pronto!')
-	; nl, writeln('Lo lamentamos, pero no se pudo encontrar una dieta adecuada en la base de datos. Por favor, intente de nuevo')).
+	(plan_diario(Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta)
+	-> nl, writeln('Gracias por usar NutriTec! Necesita mas ayuda?')
+	; nl, writeln('Lo lamentamos, pero no se pudo encontrar una dieta adecuada en la base de datos. Desea intentar de nuevo?'))
+	),
+	detectar_despedida().
 
 % Regla principal de inicio del programa
 inicio :-
-    ingresar_datos(_, _, _, _, _, _, _).
+	detectar_saludo().
+	
+	
