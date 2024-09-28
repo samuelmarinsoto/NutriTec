@@ -155,7 +155,7 @@ compareTipoDieta(X, TipoDieta) :-
     ).
 
 % Listas para validar las entradas
-listaTipoDePadecimientos(L) :- findall(X, padecimiento(X, _), L).
+listaTipoDePadecimientos(L) :- findall(X, padecimiento(X), L).
 listaFrecuencia(L) :- findall(X, nivel_actividad(X, _), L).
 listaTipoDieta(L) :- findall(X, tipo_dieta(X), L).
 
