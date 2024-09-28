@@ -1,7 +1,7 @@
 :-style_check(-singleton).
 % Importing the knowledge base
 :- consult('db.pl').
-:- consult('BNF.pl').
+:- consult('bnf.pl').
 
 % Consultar un plan diario basado en preferencias del usuario
 % Input: Minimo de calorias a consumir, maximo de calorias a consumir, nivel de actividad de usuario, padecimiento de usuario, 
