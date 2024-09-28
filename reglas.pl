@@ -17,10 +17,11 @@ plan_diario(MinCalorias, MaxCalorias, NivelActividad, Padecimiento, TipoDieta) :
 
 	CaloriasTotales is CaloriasDesayuno + CaloriasMerienda + CaloriasAlmuerzo + CaloriasCafecito + CaloriasCena,
 
-	format('Calorias Diarias: ~w~n', [CaloriasTotales]),
 	CaloriasTotales >= MinCalorias,
 	CaloriasTotales =< MaxCalorias,
 
+	nl, writeln('Muchas gracias. A continuacion, la dieta recomendada...'), nl,
+	format('Calorias Diarias: ~w~n', [CaloriasTotales]),
 	format('Desayuno: ~w~n', [DescripcionDesayuno]),
 	format('Merienda: ~w~n', [DescripcionMerienda]),
 	format('Almuerzo: ~w~n', [DescripcionAlmuerzo]),
@@ -31,7 +32,7 @@ plan_diario(MinCalorias, MaxCalorias, NivelActividad, Padecimiento, TipoDieta) :
 % Input: Tiempo (osea desayuno, almuerzo, cena, etc.), nivel de actividad del usuario, padecimientos del usuario, tipo de dieta del usuario
 % Output: True, Calorias (del platillo), Descripcion (del platillo)
 % False, no encontro una comida que satisfaga las condiciones
-% Debug: descomentar formats para ver cual comida esta evaluando, y cuales condiciones cumplió la comida
+% Debug: descomentar format/2 para ver cual comida esta evaluando, y cuales condiciones cumplió la comida
 seleccionar_comida(Tiempo, NivelActividad, Padecimiento, TipoDieta, Calorias, Descripcion) :-
 	comida(Nombre, Calorias, Tiempo, NivelesActividad, TiposDieta, Padecimientos, Descripcion),
 	%format('~w, ~w, ~w, ~w~n', [Nombre, NivelesActividad, Padecimientos, TiposDieta]),
@@ -195,10 +196,17 @@ preguntar_tipo_dieta(TipoDieta) :-
     compareTipoDieta(Respuesta, TipoDieta).
 
 % Regla de ingreso de datos y ejecucion del flujo
+% Hace preguntas al usuario para extraer informacion de el o ella, y hace una consulta con la regla plan_diario/5
+% para obtener un plan diario adecuado.
+% Input: 7 variables vacias
+% Output: plan diario de dieta
+% Debug: descomentar format/2 para ver respuestas obtenidas del usuario que pasaran a la regla plan_diario/5
 ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia, TipoDieta, MenuDieta) :-
 
-    sleep(0.5), nl, writeln('Hola, bienvenido a NutriTEC! Empecemos...'),
-
+    nl, writeln('¡Bienvenido a NutriTEC! ¿En qué le podemos ayudar hoy?'),
+	input_string(MeValeGorra),
+	nl, writeln('Claro, con gusto le ayudaremos con eso. Le recomendaremos una dieta que se ajuste a sus necesidades. Para seguir, cuentenos un poco de usted.'),
+	
     % Preguntar sobre el padecimiento
     preguntar_padecimiento(Padecimientos),
 
@@ -214,8 +222,11 @@ ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia,
     % Preguntar sobre el tipo de dieta
     preguntar_tipo_dieta(TipoDieta),
 
+	%format('~w, ~w, ~w, ~w, ~w~n', [Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta]),
     % Buscar dieta en base de datos
-	plan_diario(Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta).
+	( plan_diario(Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta)
+	-> nl, writeln('¡Gracias por usar NutriTec! Si necesita más ayuda, corra inicio(). ¡Esperamos verlo pronto!')
+	; nl, writeln('Lo lamentamos, pero no se pudo encontrar una dieta adecuada en la base de datos. Por favor, intente de nuevo')).
 
 % Regla principal de inicio del programa
 inicio :-
