@@ -28,7 +28,7 @@ La vara es sacarle `TiposDieta`, `Padecimientos`, y `NivelesActividad` al usuari
   * [ ]  Es importante mencionar que el sistema puede NO encontrar una palabra clave en la oración de entrada por lo que debe tener una oración conectora para poder proseguir con la conversación. Se sugiere utilizar listas, pero no se limita a estas.
 * [ ] `ModeloUsuario`
   * [ ] Un espacio para guardar "matches" de bases de `TiposDieta`, `Padecimientos`, y `NivelesActividad`
-  * [ ] Lógica para matchear modelo de usuario con base de `Dietas`
+  * [x] Lógica para matchear modelo de usuario con base de `Dietas`
 * [ ] Bases de datos
   * [ ] `PalabrasClave`
     * [ ] `Inicio` de una conversación
