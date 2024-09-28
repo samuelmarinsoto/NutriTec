@@ -1,8 +1,7 @@
 :-style_check(-singleton).
 % Importing the knowledge base
 :- consult('db.pl').
-%:- consult('bnf.pl').
-
+:- consult('bnf.pl').
 
 % Convierte entrada del usuario a lista de palabras
 input_list(L) :-
@@ -10,7 +9,7 @@ input_list(L) :-
     atom_codes(A, Cs),
     atomic_list_concat(L, ' ', A).
 
-% Funcion para convertir la entrada en un string
+% Regla para convertir la entrada en un string
 input_string(A) :-
     read_line_to_codes(user_input, Cs),
     atom_codes(A, Cs).
@@ -19,108 +18,157 @@ input_string(A) :-
 miembro(X, [X|_]).
 miembro(X, [_|T]) :- miembro(X, T).
 
+% Regla que elimina los signos de puntuacion de una oracion.
+eliminar_puntuacion(X, Y) :- 
+    atom_chars(X, Chars),
+    (   last(Chars, '.') 
+    ->  elim(Chars, InitChars),  % Elimina el punto al final de la oracion
+        atom_chars(Y, InitChars)  % Crear un nuevo átomo sin el punto
+    ;   Y = X).  % Si no hay un punto, simplemente se devuelve el atomo que ya se tenia antes.
+
+% Hechos para obtener todos los caracteres excepto el último
+elim([], []).  
+elim([_], []).  
+elim([H|T], [H|I]) :- elim(T, I).  
+
+% Utiliza el predicado para tener toda la oracion menos el punto.
+prefijo(I, [L|T]) :- 
+    append(I, [L], T).
+
 
 % Funciones para validar la entrada del usuario en distintas categor�as.
 
-% Funci�n para validar el padecimiento
-comparePadecimientos(X) :-
+% Regla para validar el padecimiento
+
+comparePadecimientos(X, Padecimiento) :-  
+    eliminar_puntuacion(X, Y),
+    atomic_list_concat(A, ' ', Y), 
     listaTipoDePadecimientos(L),
-    miembro(X, L), !.
-comparePadecimientos(_) :-
-    nl, writeln('Padecimiento no v�lido. Int�ntelo de nuevo.'), nl,
-    preguntar_padecimiento(_).
+    findall(P, (member(P, L), member(P, A)), Coincidencias),
+    (   Coincidencias \= []
+    ->  [Padecimiento | _] = Coincidencias,  
+        !  
+    ;   nl, writeln('No reconozco ese padecimiento, intentelo de nuevo.'), nl,
+        preguntar_padecimiento(Padecimiento)  
+    ).
 
-% Funci�n para validar las calor�as
-compareCalorias(X) :-
-    listaCalorias(L),
-    miembro(X, L), !.
-compareCalorias(_) :-
-    nl, writeln('Cantidad de calor�as no v�lida. Int�ntelo de nuevo.'), nl,
-    preguntar_calorias(_).
+% Regla para validar las calorias
+compareMaxcalorias(X, Calorias) :-  
+    eliminar_puntuacion(X, Y),  
+    atomic_list_concat(A, ' ', Y),  
+    (   buscar_numero(A, Calorias),  
+        number(Calorias),  
+        Calorias >= 1260, 
+        Calorias =< 1970 
+    ->  !  % Si las calorías son válidas, continúa
+    ;   % Si no es válido, vuelve a preguntar
+        nl, writeln('Por favor, ingrese una cantidad válida de calorías.'), nl,
+        preguntar_maxcalorias(Calorias)  
+    ).
 
-% Funci�n para validar la actividad f�sica
-compareActividad(X) :-
-    listaActividad(L),
-    miembro(X, L), !.
-compareActividad(_) :-
-    nl, writeln('Actividad no v�lida. Int�ntelo de nuevo.'), nl,
-    preguntar_actividad(_).
+% Regla para validar las calorias
+compareMincalorias(X, Calorias) :-  
+    eliminar_puntuacion(X, Y),  
+    atomic_list_concat(A, ' ', Y),  
+    (   buscar_numero(A, Calorias),  
+        number(Calorias),  
+        Calorias >= 1260, 
+        Calorias =< 1970 
+    ->  !  % Si las calorías son válidas, continúa
+    ;   % Si no es válido, vuelve a preguntar
+        nl, writeln('Por favor, ingrese una cantidad válida de calorías.'), nl,
+        preguntar_mincalorias(Calorias)  
+    ).
 
-% Funci�n para validar la frecuencia de actividad f�sica
-compareFrecuencia(X) :-
+% Regla que se encarga de encontrar un numero en la oracion.
+
+buscar_numero([], _) :- fail. 
+buscar_numero([H|_], Num) :- 
+    atom_number(H, Num),  
+    number(Num), !. 
+buscar_numero([_|T], Num) :- buscar_numero(T, Num).
+
+% Regla para validar la frecuencia de actividad fisica
+compareFrecuencia(X, Frecuencia) :-  
+    eliminar_puntuacion(X, Y),
+    atomic_list_concat(A, ' ', Y), 
     listaFrecuencia(L),
-    miembro(X, L), !.
-compareFrecuencia(_) :-
-    nl, writeln('Frecuencia no v�lida. Int�ntelo de nuevo.'), nl,
-    preguntar_frecuencia(_).
+    findall(P, (member(P, L), member(P, A)), Coincidencias),
+    (   Coincidencias \= []
+    ->  [Frecuencia | _] = Coincidencias,  
+        !  
+    ;   nl, writeln('No reconozco ese nivel de frecuencia de actividad fisica, intentelo de nuevo.'), nl,
+        preguntar_frecuencia(Frecuencia)  
+    ).
 
-% Funci�n para validar el tipo de dieta
-compareTipoDieta(X) :-
+% Regla para validar el tipo de dieta
+compareTipoDieta(X, TipoDieta) :-  
+    eliminar_puntuacion(X, Y),
+    atomic_list_concat(A, ' ', Y), 
     listaTipoDieta(L),
-    miembro(X, L), !.
-compareTipoDieta(_) :-
-    nl, writeln('Tipo de dieta no v�lido. Int�ntelo de nuevo.'), nl,
-    preguntar_tipo_dieta(_).
+    findall(P, (member(P, L), member(P, A)), Coincidencias),
+    (   Coincidencias \= []
+    ->  [TipoDieta | _] = Coincidencias,  
+        !  
+    ;   nl, writeln('No reconozco ese tipo de dieta, intentelo de nuevo.'), nl,
+        preguntar_tipo_dieta(TipoDieta)  
+    ).
 
 % Listas para validar las entradas
-listaTipoDePadecimientos(L) :- findall(X, (diet([_, _, _, _, _, [X|_], _, _, _])), L).
-listaCalorias(L) :- findall(X, (diet([_, _, X, _, _, _, _, _, _])), L).
-listaActividad(L) :- findall(X, (diet([_, _, _, _, _, _, _, X, _])), L).
-listaFrecuencia(L) :- findall(X, (diet([_, _, _, X, _, _, _, _, _])), L).
-listaTipoDieta(L) :- findall(X, (diet([_, X, _, _, _, _, _, _, _])), L).
+listaTipoDePadecimientos(L) :- findall(X, padecimiento(X, _), L).
+listaFrecuencia(L) :- findall(X, nivel_actividad(X, _), L).
+listaTipoDieta(L) :- findall(X, tipo_dieta(X), L).
 
-% Preguntas espec�ficas al usuario
+% Preguntas especificas al usuario
 
 % Pregunta sobre padecimientos
 preguntar_padecimiento(Padecimiento) :-
-    nl, writeln('�Tienes alg�n padecimiento? (Ejemplo: hipertensi�n, diabetes, etc.)'),
-    input_to_string(Respuesta),
-    comparePadecimientos(Respuesta),
-    Padecimiento = Respuesta.
+    nl, writeln('¿Tiene algun padecimiento? (Ejemplo: hipertension)'),
+    input_string(Respuesta),
+    comparePadecimientos(Respuesta, Padecimiento).
 
-% Pregunta sobre calor�as
-preguntar_calorias(Calorias) :-
-    nl, writeln('�Cu�ntas calor�as diarias quieres consumir? (Ejemplo: 2000, 1500, etc.)'),
-    input_to_string(Respuesta),
-    compareCalorias(Respuesta),
-    Calorias = Respuesta.
+% Pregunta sobre calorias maximas
+preguntar_maxcalorias(Maxcalorias) :-
+    nl, writeln('¿Cuantas calorias maximas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    input_string(Respuesta),
+    compareMaxcalorias(Respuesta, Maxcalorias).
 
-% Pregunta sobre la actividad f�sica
-preguntar_actividad(Actividad) :-
-    nl, writeln('�Realizas alguna actividad f�sica? (Ejemplo: correr, nadar, etc.)'),
-    input_to_string(Respuesta),
-    compareActividad(Respuesta),
-    Actividad = Respuesta.
+% Pregunta sobre calorias minimas
+preguntar_mincalorias(Mincalorias) :-
+    nl, writeln('¿Cuantas calorias minimas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    input_string(Respuesta),
+    compareMincalorias(Respuesta, Mincalorias).
 
-% Pregunta sobre la frecuencia de actividad f�sica
+% Pregunta sobre la frecuencia de actividad fisica
 preguntar_frecuencia(Frecuencia) :-
-    nl, writeln('�Con qu� frecuencia realizas actividad f�sica? (Inicial, intermedio, avanzado)'),
-    input_to_string(Respuesta),
-    compareFrecuencia(Respuesta),
-    Frecuencia = Respuesta.
+    nl, writeln('¿Con que nivel de frecuencia realizas actividad fisica?'),
+    nl, writeln('inicial: 0-2 veces por semana'),
+    nl, writeln('intermedio: 3-4 veces por semana'),
+    nl, writeln('avanzado: 5 o mas veces por semana'),
+    input_string(Respuesta),
+    compareFrecuencia(Respuesta, Frecuencia).
 
 % Pregunta sobre el tipo de dieta
 preguntar_tipo_dieta(TipoDieta) :-
-    nl, writeln('�Qu� tipo de dieta prefieres? (Ejemplo: vegetariana, keto, etc.)'),
-    input_to_string(Respuesta),
-    compareTipoDieta(Respuesta),
-    TipoDieta = Respuesta.
+    nl, writeln('¿Que tipo de dieta prefieres? (Ejemplo: vegetariana)'),
+    input_string(Respuesta),
+    compareTipoDieta(Respuesta, TipoDieta).
 
-% Funci�n de ingreso de datos y ejecuci�n del flujo
-ingresar_datos(NombreDieta, Padecimientos, Calorias, Actividad, Frecuencia, TipoDieta, MenuDieta) :-
+% Regla de ingreso de datos y ejecucion del flujo
+ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia, TipoDieta, MenuDieta) :-
 
-    sleep(0.5), nl, writeln('Hola, bienvenido al asistente de dietas. Empecemos...'),
+    sleep(0.5), nl, writeln('Hola, bienvenido a NutriTEC! Empecemos...'),
 
     % Preguntar sobre el padecimiento
     preguntar_padecimiento(Padecimientos),
 
-    % Preguntar sobre calor�as
-    preguntar_calorias(Calorias),
+    % Preguntar sobre calorias maximas
+    preguntar_maxcalorias(Maxcalorias),
 
-    % Preguntar sobre actividad f�sica
-    preguntar_actividad(Actividad),
+    % Preguntar sobre calorias minimas
+    preguntar_mincalorias(Mincalorias),
 
-    % Preguntar sobre la frecuencia de actividad f�sica
+    % Preguntar sobre la frecuencia de actividad fisica
     preguntar_frecuencia(Frecuencia),
 
     % Preguntar sobre el tipo de dieta
@@ -129,37 +177,68 @@ ingresar_datos(NombreDieta, Padecimientos, Calorias, Actividad, Frecuencia, Tipo
     % Buscar dieta en base de datos
 
 
-% Funci�n principal de inicio del programa
+% Regla principal de inicio del programa
 inicio :-
     ingresar_datos(_, _, _, _, _, _, _).
 
 
-plan_diario(MinCalorias, MaxCalorias, NivelActividad, Padecimiento, TipoDieta) :-
-	seleccionar_comida(desayuno, NivelActividad, Padecimiento, TipoDieta, CaloriasDesayuno, DescripcionDesayuno),
-	seleccionar_comida(merienda, NivelActividad, Padecimiento, TipoDieta, CaloriasMerienda, DescripcionMerienda),
-	seleccionar_comida(almuerzo, NivelActividad, Padecimiento, TipoDieta, CaloriasAlmuerzo, DescripcionAlmuerzo),
-	seleccionar_comida(merienda, NivelActividad, Padecimiento, TipoDieta, CaloriasCafecito, DescripcionCafecito),
-	seleccionar_comida(cena, NivelActividad, Padecimiento, TipoDieta, CaloriasCena, DescripcionCena),
 
-	CaloriasTotales is CaloriasDesayuno + CaloriasMerienda + CaloriasAlmuerzo + CaloriasCafecito + CaloriasCena,
 
-	format('Calorias Diarias: ~w~n', [CaloriasTotales]),
-	CaloriasTotales >= MinCalorias,
-	CaloriasTotales =< MaxCalorias,
+% Match activity levels based on input
+match_activity([], _).
+match_activity([Single|_], Niveles) :-
+    member(Single, Niveles), !.
+match_activity([First|Rest], Niveles) :-
+    member(First, Niveles), !;
+    match_activity(Rest, Niveles).
 
-	format('Desayuno: ~w~n', [DescripcionDesayuno]),
-	format('Merienda: ~w~n', [DescripcionMerienda]),
-	format('Almuerzo: ~w~n', [DescripcionAlmuerzo]),
-	format('Cafecito: ~w~n', [DescripcionCafecito]),
-	format('Cena: ~w~n', [DescripcionCena]).
+% Match conditions based on input
+match_condition(_, []) :- !.
+match_condition(Padecimientos, PadecimientosList) :-
+    (   var(Padecimientos)
+    ->  true
+    ;   (   is_list(Padecimientos)
+        ->  forall(member(Padecimiento, Padecimientos), member(Padecimiento, PadecimientosList))
+        ;   member(Padecimientos, PadecimientosList)
+        )
+    ).
 
-seleccionar_comida(Tiempo, NivelActividad, Padecimiento, TipoDieta, Calorias, Descripcion) :-
-	comida(Nombre, Calorias, Tiempo, NivelesActividad, TiposDieta, Padecimientos, Descripcion),
-	%format('~w, ~w, ~w, ~w~n', [Nombre, NivelesActividad, Padecimientos, TiposDieta]),
-	member(NivelActividad, NivelesActividad),
-	%format('pass nivel actividad~n'),
-	member(Padecimiento, Padecimientos),
-	%format('pass padecimiento~n'),
-	member(TipoDieta, TiposDieta),
-	%format('pass tipodieta~n'),
-	!. 
+% Match diet types based on input
+match_diet(_, []) :- !.
+match_diet(TiposDieta, TiposList) :-
+    (   var(TiposDieta)
+    ->  true
+    ;   (   is_list(TiposDieta)
+        ->  forall(member(Tipo, TiposDieta), member(Tipo, TiposList))
+        ;   member(TiposDieta, TiposList)
+        )
+    ).
+
+% Find meals of the specified type while checking conditions and summing calories
+find_meal(MealType, NivelesActividad, Padecimientos, TiposDieta, Calorias, Descripcion) :-
+    comida(Meal, Calorias, MealType, Niveles, Tipos, PadecimientosList, Descripcion),
+    format('Trying meal: ~w~n', [Meal]),
+    format('Calories: ~w, Description: ~w~n', [Calorias, Descripcion]),
+    match_activity(NivelesActividad, Niveles),
+    match_condition(Padecimientos, PadecimientosList),
+    match_diet(TiposDieta, Tipos).
+
+% Generate the daily meal plan based on input parameters
+plan_diario(NivelesActividad, Padecimientos, TiposDieta, MinCalorias, MaxCalorias) :-
+    find_meal(desayuno, NivelesActividad, Padecimientos, TiposDieta, BreakfastCalories, BreakfastDescripcion),
+    find_meal(merienda_manana, NivelesActividad, Padecimientos, TiposDieta, MorningSnackCalories, MorningSnackDescripcion),
+    find_meal(almuerzo, NivelesActividad, Padecimientos, TiposDieta, LunchCalories, LunchDescripcion),
+    find_meal(merienda_tarde, NivelesActividad, Padecimientos, TiposDieta, AfternoonSnackCalories, AfternoonSnackDescripcion),
+    find_meal(cena, NivelesActividad, Padecimientos, TiposDieta, DinnerCalories, DinnerDescripcion),
+
+    TotalCalorias is BreakfastCalories + MorningSnackCalories + LunchCalories + AfternoonSnackCalories + DinnerCalories,
+
+    format('Total Calories for the meal plan: ~w~n', [TotalCalorias]),
+    TotalCalorias >= MinCalorias,
+    TotalCalorias =< MaxCalorias,
+
+    format('Breakfast: ~w~n', [BreakfastDescripcion]),
+    format('Morning Snack: ~w~n', [MorningSnackDescripcion]),
+    format('Lunch: ~w~n', [LunchDescripcion]),
+    format('Afternoon Snack: ~w~n', [AfternoonSnackDescripcion]),
+    format('Dinner: ~w~n', [DinnerDescripcion]).
