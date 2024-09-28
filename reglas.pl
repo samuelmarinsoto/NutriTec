@@ -77,7 +77,7 @@ prefijo(I, [L|T]) :-
     append(I, [L], T).
 
 
-% Funciones para validar la entrada del usuario en distintas categor�as.
+% Funciones para validar la entrada del usuario en distintas categorias.
 
 % Regla para validar el padecimiento
 
@@ -164,25 +164,25 @@ listaTipoDieta(L) :- findall(X, tipo_dieta(X), L).
 
 % Pregunta sobre padecimientos
 preguntar_padecimiento(Padecimiento) :-
-    nl, writeln('¿Tiene algun padecimiento? (Ejemplo: hipertension)'),
+    nl, writeln('Tiene algun padecimiento? (Ejemplo: hipertension)'),
     input_string(Respuesta),
     comparePadecimientos(Respuesta, Padecimiento).
 
 % Pregunta sobre calorias maximas
 preguntar_maxcalorias(Maxcalorias) :-
-    nl, writeln('¿Cuantas calorias maximas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    nl, writeln('Cuantas calorias maximas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
     input_string(Respuesta),
     compareMaxcalorias(Respuesta, Maxcalorias).
 
 % Pregunta sobre calorias minimas
 preguntar_mincalorias(Mincalorias) :-
-    nl, writeln('¿Cuantas calorias minimas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    nl, writeln('Cuantas calorias minimas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
     input_string(Respuesta),
     compareMincalorias(Respuesta, Mincalorias).
 
 % Pregunta sobre la frecuencia de actividad fisica
 preguntar_frecuencia(Frecuencia) :-
-    nl, writeln('¿Con que nivel de frecuencia realizas actividad fisica?'),
+    nl, writeln('Con que nivel de frecuencia realizas actividad fisica?'),
     nl, writeln('inicial: 0-2 veces por semana'),
     nl, writeln('intermedio: 3-4 veces por semana'),
     nl, writeln('avanzado: 5 o mas veces por semana'),
@@ -191,7 +191,7 @@ preguntar_frecuencia(Frecuencia) :-
 
 % Pregunta sobre el tipo de dieta
 preguntar_tipo_dieta(TipoDieta) :-
-    nl, writeln('¿Que tipo de dieta prefieres? (Ejemplo: vegetariana)'),
+    nl, writeln('Que tipo de dieta prefieres? (Ejemplo: vegetariana)'),
     input_string(Respuesta),
     compareTipoDieta(Respuesta, TipoDieta).
 
@@ -203,7 +203,7 @@ preguntar_tipo_dieta(TipoDieta) :-
 % Debug: descomentar format/2 para ver respuestas obtenidas del usuario que pasaran a la regla plan_diario/5
 ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia, TipoDieta, MenuDieta) :-
 
-    nl, writeln('¡Bienvenido a NutriTEC! ¿En qué le podemos ayudar hoy?'),
+    nl, writeln('Bienvenido a NutriTEC! En que le podemos ayudar hoy?'),
 	input_string(MeValeGorra),
 	nl, writeln('Claro, con gusto le ayudaremos con eso. Le recomendaremos una dieta que se ajuste a sus necesidades. Para seguir, cuentenos un poco de usted.'),
 	
@@ -225,7 +225,7 @@ ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia,
 	%format('~w, ~w, ~w, ~w, ~w~n', [Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta]),
     % Buscar dieta en base de datos
 	( plan_diario(Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta)
-	-> nl, writeln('¡Gracias por usar NutriTec! Si necesita más ayuda, corra inicio(). ¡Esperamos verlo pronto!')
+	-> nl, writeln('Gracias por usar NutriTec! Si necesita mas ayuda, corra inicio(). Esperamos verlo pronto!')
 	; nl, writeln('Lo lamentamos, pero no se pudo encontrar una dieta adecuada en la base de datos. Por favor, intente de nuevo')).
 
 % Regla principal de inicio del programa
