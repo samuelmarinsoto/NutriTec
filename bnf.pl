@@ -47,7 +47,8 @@ determinante(['Un'|X],X).
 
 % Cualquier nombre de cualquier cosa que esté en la oración.
 
-sustantivo_g([_|X],X).
+nombre([_|X],X).
+nombre([H|X], X) :- number(H).
 
 % Sección que evalúa los posibles verbos que puede usar la oración, en este nutritec, chequea si el usuario está hablando en primera persona singular.
 
@@ -78,7 +79,10 @@ oracion(X, Y):- sintagma_verbal_2(X,Y).
 %Se chequea el sujeto de la oración
 
 sintagma_nominal(X,Y):- determinante(X,A), nombre(A,Y).
-sintagma_nominal(X,Y):- determinante(X,A).
+sintagma_nominal(X,Y):- determinante(X,A), nombre(A,B), nombre(B,Y).
+sintagma_nominal(X,Y):- nombre(X,Y).
+sintagma_nominal(X,Y):- nombre(X,A), nombre(A,Y).
+sintagma_nominal(X,Y):- nombre(X,A), nombre(A,B), nombre(B,Y).
 
 %Se chequea el predicado de la oración si esta tiene un sujeto previo.
 
@@ -91,6 +95,4 @@ sintagma_verbal_2(X,Y):- verbo(X,A), sintagma_nominal(A,Y).
 verificar_oracion(Oracion) :- oracion(Oracion, []), !.
 
 verificar_oracion(Oracion) :-
-    nl, writeln('Lo siento, no entendí lo que quiso escribir.'), !,
-    input_a_lista(NuevaOracion),
-    verificar_oracion(NuevaOracion).
+    nl, writeln('Lo siento, no entendi lo que quiso escribir.'), false.
