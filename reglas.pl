@@ -1,7 +1,47 @@
 :-style_check(-singleton).
 % Importing the knowledge base
 :- consult('db.pl').
-:- consult('bnf.pl').
+:- consult('BNF.pl').
+
+% Consultar un plan diario basado en preferencias del usuario
+% Input: Minimo de calorias a consumir, maximo de calorias a consumir, nivel de actividad de usuario, padecimiento de usuario, 
+% tipo de dieta del usuario
+% Output: True, tira a consola una lista de platillos para cada hora del dia y el total de calorias diarias que contiene el plan
+% False, no encontro una combinacion de comidas que satisfaga las condiciones
+plan_diario(MinCalorias, MaxCalorias, NivelActividad, Padecimiento, TipoDieta) :-
+	seleccionar_comida(desayuno, NivelActividad, Padecimiento, TipoDieta, CaloriasDesayuno, DescripcionDesayuno),
+	seleccionar_comida(merienda, NivelActividad, Padecimiento, TipoDieta, CaloriasMerienda, DescripcionMerienda),
+	seleccionar_comida(almuerzo, NivelActividad, Padecimiento, TipoDieta, CaloriasAlmuerzo, DescripcionAlmuerzo),
+	seleccionar_comida(merienda, NivelActividad, Padecimiento, TipoDieta, CaloriasCafecito, DescripcionCafecito),
+	seleccionar_comida(cena, NivelActividad, Padecimiento, TipoDieta, CaloriasCena, DescripcionCena),
+
+	CaloriasTotales is CaloriasDesayuno + CaloriasMerienda + CaloriasAlmuerzo + CaloriasCafecito + CaloriasCena,
+
+	format('Calorias Diarias: ~w~n', [CaloriasTotales]),
+	CaloriasTotales >= MinCalorias,
+	CaloriasTotales =< MaxCalorias,
+
+	format('Desayuno: ~w~n', [DescripcionDesayuno]),
+	format('Merienda: ~w~n', [DescripcionMerienda]),
+	format('Almuerzo: ~w~n', [DescripcionAlmuerzo]),
+	format('Cafecito: ~w~n', [DescripcionCafecito]),
+	format('Cena: ~w~n', [DescripcionCena]).
+
+% Consultar por una comida
+% Input: Tiempo (osea desayuno, almuerzo, cena, etc.), nivel de actividad del usuario, padecimientos del usuario, tipo de dieta del usuario
+% Output: True, Calorias (del platillo), Descripcion (del platillo)
+% False, no encontro una comida que satisfaga las condiciones
+% Debug: descomentar formats para ver cual comida esta evaluando, y cuales condiciones cumplió la comida
+seleccionar_comida(Tiempo, NivelActividad, Padecimiento, TipoDieta, Calorias, Descripcion) :-
+	comida(Nombre, Calorias, Tiempo, NivelesActividad, TiposDieta, Padecimientos, Descripcion),
+	%format('~w, ~w, ~w, ~w~n', [Nombre, NivelesActividad, Padecimientos, TiposDieta]),
+	member(NivelActividad, NivelesActividad),
+	%format('pass nivel actividad~n'),
+	member(Padecimiento, Padecimientos),
+	%format('pass padecimiento~n'),
+	member(TipoDieta, TiposDieta),
+	%format('pass tipodieta~n'),
+	!. 
 
 % Convierte entrada del usuario a lista de palabras
 input_list(L) :-
@@ -172,73 +212,11 @@ ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia,
     preguntar_frecuencia(Frecuencia),
 
     % Preguntar sobre el tipo de dieta
-    preguntar_tipo_dieta(TipoDieta).
+    preguntar_tipo_dieta(TipoDieta),
 
     % Buscar dieta en base de datos
-
+	plan_diario(Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta).
 
 % Regla principal de inicio del programa
 inicio :-
     ingresar_datos(_, _, _, _, _, _, _).
-
-
-
-
-% Match activity levels based on input
-match_activity([], _).
-match_activity([Single|_], Niveles) :-
-    member(Single, Niveles), !.
-match_activity([First|Rest], Niveles) :-
-    member(First, Niveles), !;
-    match_activity(Rest, Niveles).
-
-% Match conditions based on input
-match_condition(_, []) :- !.
-match_condition(Padecimientos, PadecimientosList) :-
-    (   var(Padecimientos)
-    ->  true
-    ;   (   is_list(Padecimientos)
-        ->  forall(member(Padecimiento, Padecimientos), member(Padecimiento, PadecimientosList))
-        ;   member(Padecimientos, PadecimientosList)
-        )
-    ).
-
-% Match diet types based on input
-match_diet(_, []) :- !.
-match_diet(TiposDieta, TiposList) :-
-    (   var(TiposDieta)
-    ->  true
-    ;   (   is_list(TiposDieta)
-        ->  forall(member(Tipo, TiposDieta), member(Tipo, TiposList))
-        ;   member(TiposDieta, TiposList)
-        )
-    ).
-
-% Find meals of the specified type while checking conditions and summing calories
-find_meal(MealType, NivelesActividad, Padecimientos, TiposDieta, Calorias, Descripcion) :-
-    comida(Meal, Calorias, MealType, Niveles, Tipos, PadecimientosList, Descripcion),
-    format('Trying meal: ~w~n', [Meal]),
-    format('Calories: ~w, Description: ~w~n', [Calorias, Descripcion]),
-    match_activity(NivelesActividad, Niveles),
-    match_condition(Padecimientos, PadecimientosList),
-    match_diet(TiposDieta, Tipos).
-
-% Generate the daily meal plan based on input parameters
-plan_diario(NivelesActividad, Padecimientos, TiposDieta, MinCalorias, MaxCalorias) :-
-    find_meal(desayuno, NivelesActividad, Padecimientos, TiposDieta, BreakfastCalories, BreakfastDescripcion),
-    find_meal(merienda_manana, NivelesActividad, Padecimientos, TiposDieta, MorningSnackCalories, MorningSnackDescripcion),
-    find_meal(almuerzo, NivelesActividad, Padecimientos, TiposDieta, LunchCalories, LunchDescripcion),
-    find_meal(merienda_tarde, NivelesActividad, Padecimientos, TiposDieta, AfternoonSnackCalories, AfternoonSnackDescripcion),
-    find_meal(cena, NivelesActividad, Padecimientos, TiposDieta, DinnerCalories, DinnerDescripcion),
-
-    TotalCalorias is BreakfastCalories + MorningSnackCalories + LunchCalories + AfternoonSnackCalories + DinnerCalories,
-
-    format('Total Calories for the meal plan: ~w~n', [TotalCalorias]),
-    TotalCalorias >= MinCalorias,
-    TotalCalorias =< MaxCalorias,
-
-    format('Breakfast: ~w~n', [BreakfastDescripcion]),
-    format('Morning Snack: ~w~n', [MorningSnackDescripcion]),
-    format('Lunch: ~w~n', [LunchDescripcion]),
-    format('Afternoon Snack: ~w~n', [AfternoonSnackDescripcion]),
-    format('Dinner: ~w~n', [DinnerDescripcion]).
