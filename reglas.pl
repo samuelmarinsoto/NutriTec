@@ -143,9 +143,9 @@ plan_diario(MinCalorias, MaxCalorias, NivelActividad, Padecimiento, TipoDieta) :
 
 	CaloriasTotales is CaloriasDesayuno + CaloriasMerienda + CaloriasAlmuerzo + CaloriasCafecito + CaloriasCena,
 
-	format('Calorias Totales: ~w~n', [CaloriasTotales]),
-	TotalCalorias >= MinCalorias,
-	TotalCalorias =< MaxCalorias,
+	format('Calorias Diarias: ~w~n', [CaloriasTotales]),
+	CaloriasTotales >= MinCalorias,
+	CaloriasTotales =< MaxCalorias,
 
 	format('Desayuno: ~w~n', [DescripcionDesayuno]),
 	format('Merienda: ~w~n', [DescripcionMerienda]),
@@ -155,11 +155,11 @@ plan_diario(MinCalorias, MaxCalorias, NivelActividad, Padecimiento, TipoDieta) :
 
 seleccionar_comida(Tiempo, NivelActividad, Padecimiento, TipoDieta, Calorias, Descripcion) :-
 	comida(Nombre, Calorias, Tiempo, NivelesActividad, TiposDieta, Padecimientos, Descripcion),
-	format('~w, ~w, ~w, ~w~n', [Nombre, NivelesActividad, Padecimientos, TiposDieta]),
+	%format('~w, ~w, ~w, ~w~n', [Nombre, NivelesActividad, Padecimientos, TiposDieta]),
 	member(NivelActividad, NivelesActividad),
-	format('pass nivel actividad~n'),
+	%format('pass nivel actividad~n'),
 	member(Padecimiento, Padecimientos),
-	format('pass padecimiento~n'),
+	%format('pass padecimiento~n'),
 	member(TipoDieta, TiposDieta),
-	format('pass tipodieta~n'),
+	%format('pass tipodieta~n'),
 	!. 
