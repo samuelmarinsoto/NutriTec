@@ -38,12 +38,21 @@ determinante([yo|X],X).
 determinante(['Yo'|X],X).
 determinante([la|X],X).
 determinante(['La'|X],X).
+determinante([las|X],X).
+determinante(['Las'|X],X).
 determinante([el|X],X).
 determinante(['El'|X],X).
+determinante([los|X],X).
+determinante(['Los'|X],X).
 determinante([una|X],X).
 determinante(['Una'|X],X).
+determinante([unas|X],X).
+determinante(['Unas'|X],X).
 determinante([un|X],X).
 determinante(['Un'|X],X).
+determinante([unos|X],X).
+determinante(['Unos'|X],X).
+
 
 % Cualquier nombre de cualquier cosa que esté en la oración.
 
@@ -57,9 +66,15 @@ verbo([tengo|X],X).
 verbo([siento|X],X).
 verbo([estoy|X],X).
 verbo([necesito|X],X).
+verbo([hago|X],X).
 verbo([ocupo|X],X).
-verbo([me,gustaria|X],X).
-verbo([diagnosticado|X],X).
+verbo([realizo|X],X).
+verbo([deseo|X],X).
+verbo([padezco|X],X).
+verbo([sufro|X],X).
+verbo([requiero|X],X).
+verbo([pido|X],X).
+verbo([me, gustaria|X],X).
 verbo([me, diagnosticaron|X],X).
 
 verbo(['Quiero'|X],X).
@@ -67,6 +82,14 @@ verbo(['Tengo'|X],X).
 verbo(['Siento'|X],X).
 verbo(['Estoy'|X],X).
 verbo(['Necesito'|X],X).
+verbo(['Hago'|X],X).
+verbo(['Ocupo'|X],X).
+verbo(['Realizo'|X],X).
+verbo(['Deseo'|X],X).
+verbo(['Padezco'|X],X).
+verbo(['Sufro'|X],X).
+verbo(['Requiero'|X],X).
+verbo(['Pido'|X],X).
 verbo(['Me', diagnosticaron|X],X).
 verbo(['Me', gustaria|X],X).
 
