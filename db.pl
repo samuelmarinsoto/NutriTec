@@ -29,17 +29,19 @@ nivel_actividad(avanzado, "5 o más veces por semana").
 
 % saludos
 saludos(hola).
+saludos(nutritec).
 saludos('Hola').
 saludos(buenos).
 saludos(buenas).
 saludos(ocupo).
 saludos(necesito).
 
-% ??????????????
+% despedidas
 despedidas(gracias).
 despedidas(adios).
 despedidas(no).
 despedidas(muchas).
+despedidas(luego)
 despedidas(estoy).
 despedidas(bien).
 
