@@ -20,7 +20,7 @@ plan_diario(MinCalorias, MaxCalorias, NivelActividad, Padecimiento, TipoDieta) :
 	CaloriasTotales >= MinCalorias,
 	CaloriasTotales =< MaxCalorias,
 
-	nl, writeln('Muchas gracias. A continuacion, la dieta recomendada...'), nl,
+	nl, writeln('Muchas gracias por confiar en el servicio NutriTEC. A continuacion, la dieta recomendada...'), nl,
 	format('Calorias Diarias: ~w~n', [CaloriasTotales]),
 	format('Desayuno: ~w~n', [DescripcionDesayuno]),
 	format('Merienda: ~w~n', [DescripcionMerienda]),
@@ -81,43 +81,58 @@ prefijo(I, [L|T]) :-
 
 % Regla para validar el padecimiento
 comparePadecimientos(X, Padecimiento) :-  
-    eliminar_puntuacion(X, Y),
-    atomic_list_concat(A, ' ', Y), 
-    listaTipoDePadecimientos(L),
-    findall(P, (member(P, L), member(P, A)), Coincidencias),
-    (   Coincidencias \= []
-    ->  [Padecimiento | _] = Coincidencias,  
-        !  
-    ;   nl, writeln('No reconozco ese padecimiento, intentelo de nuevo.'), nl,
+    eliminar_puntuacion(X, Y),  
+    atomic_list_concat(A, ' ', Y),  
+    listaTipoDePadecimientos(L),  
+    findall(P, (member(P, L), member(P, A)), Coincidencias),  
+    
+    (   verificar_oracion(A) 
+    ->  % Si la verificación es exitosa
+        (   Coincidencias \= [] 
+        ->  [Padecimiento | _] = Coincidencias  
+        ;   nl, writeln('No reconozco ese padecimiento, intentelo de nuevo.'), 
+            preguntar_padecimiento(Padecimiento)  
+        )
+    ;   
         preguntar_padecimiento(Padecimiento)  
     ).
 
-% Regla para validar las calorias
+% Regla para validar las calorias maximas
 compareMaxcalorias(X, Calorias) :-  
-    eliminar_puntuacion(X, Y),  
+    eliminar_puntuacion(X, Y), 
     atomic_list_concat(A, ' ', Y),  
-    (   buscar_numero(A, Calorias),  
-        number(Calorias),  
-        Calorias >= 1260, 
-        Calorias =< 1970 
-    ->  !  % Si las calorias son validas, continua
-    ;   % Si no es válido, vuelve a preguntar
-        nl, writeln('Por favor, ingrese una cantidad válida de calorías.'), nl,
-        preguntar_maxcalorias(Calorias)  
+    (   verificar_oracion(A) 
+    ->  
+        (   buscar_numero(A, Calorias),  % Buscar el número en la lista de palabras
+            number(Calorias),  
+            Calorias >= 1260,  
+            Calorias =< 1970  
+        ->  !  
+        ;   
+            nl, writeln('Por favor, ingrese una cantidad valida de calorias.'), nl,
+            preguntar_maxcalorias(Calorias)  % Pregunta de nuevo la cantidad de calorías
+        )
+    ;   
+        preguntar_maxcalorias(Calorias)  % Vuelve a preguntar la cantidad de calorias si la oracion esta mal construida
     ).
 
 % Regla para validar las calorias
 compareMincalorias(X, Calorias) :-  
-    eliminar_puntuacion(X, Y),  
+    eliminar_puntuacion(X, Y), 
     atomic_list_concat(A, ' ', Y),  
-    (   buscar_numero(A, Calorias),  
-        number(Calorias),  
-        Calorias >= 1260, 
-        Calorias =< 1970 
-    ->  !  % Si las calorías son válidas, continúa
-    ;   % Si no es válido, vuelve a preguntar
-        nl, writeln('Por favor, ingrese una cantidad válida de calorías.'), nl,
-        preguntar_mincalorias(Calorias)  
+    (   verificar_oracion(A) 
+    ->  
+        (   buscar_numero(A, Calorias),  % Buscar el número en la lista de palabras
+            number(Calorias),  
+            Calorias >= 1260,  
+            Calorias =< 1970  
+        ->  !  
+        ;   
+            nl, writeln('Por favor, ingrese una cantidad valida de calorias.'), nl,
+            preguntar_mincalorias(Calorias)  % Vuelve a preguntar si la cantidad de calorias no es valida
+        )
+    ;   
+        preguntar_mincalorias(Calorias)  % Vuelve a pregunat
     ).
 
 % Regla que se encarga de encontrar un numero en la oracion.
@@ -129,27 +144,37 @@ buscar_numero([_|T], Num) :- buscar_numero(T, Num).
 
 % Regla para validar la frecuencia de actividad fisica
 compareFrecuencia(X, Frecuencia) :-  
-    eliminar_puntuacion(X, Y),
-    atomic_list_concat(A, ' ', Y), 
-    listaFrecuencia(L),
-    findall(P, (member(P, L), member(P, A)), Coincidencias),
-    (   Coincidencias \= []
-    ->  [Frecuencia | _] = Coincidencias,  
-        !  
-    ;   nl, writeln('No reconozco ese nivel de frecuencia de actividad fisica, intentelo de nuevo.'), nl,
+    eliminar_puntuacion(X, Y),  
+    atomic_list_concat(A, ' ', Y),  
+    listaFrecuencia(L),  
+    findall(P, (member(P, L), member(P, A)), Coincidencias),  
+    
+    (   verificar_oracion(A) 
+    ->  
+        (   Coincidencias \= [] 
+        ->  [Frecuencia | _] = Coincidencias  
+        ;   nl, writeln('No reconozco ese padecimiento, intentelo de nuevo.'), 
+            preguntar_frecuencia(Frecuencia)  
+        )
+    ;   
         preguntar_frecuencia(Frecuencia)  
     ).
 
 % Regla para validar el tipo de dieta
 compareTipoDieta(X, TipoDieta) :-  
-    eliminar_puntuacion(X, Y),
-    atomic_list_concat(A, ' ', Y), 
-    listaTipoDieta(L),
-    findall(P, (member(P, L), member(P, A)), Coincidencias),
-    (   Coincidencias \= []
-    ->  [TipoDieta | _] = Coincidencias,  
-        !  
-    ;   nl, writeln('No reconozco ese tipo de dieta, intentelo de nuevo.'), nl,
+    eliminar_puntuacion(X, Y),  
+    atomic_list_concat(A, ' ', Y),  
+    listaTipoDieta(L),  
+    findall(P, (member(P, L), member(P, A)), Coincidencias),  
+    
+    (   verificar_oracion(A) 
+    ->  
+        (   Coincidencias \= [] 
+        ->  [TipoDieta | _] = Coincidencias  
+        ;   nl, writeln('No reconozco ese padecimiento, intentelo de nuevo.'), 
+            preguntar_tipo_dieta(TipoDieta)  
+        )
+    ;   
         preguntar_tipo_dieta(TipoDieta)  
     ).
 
@@ -194,25 +219,25 @@ listaTipoDieta(L) :- findall(X, tipo_dieta(X), L).
 
 % Pregunta sobre padecimientos
 preguntar_padecimiento(Padecimiento) :-
-    nl, writeln('Tiene algun padecimiento? (Ejemplo: hipertension)'),
-    input_string(Respuesta),
+    nl, writeln('¿Tiene algun padecimiento? (Ejemplo: hipertension)'),
+    input_string(Respuesta), 
     comparePadecimientos(Respuesta, Padecimiento).
 
 % Pregunta sobre calorias maximas
 preguntar_maxcalorias(Maxcalorias) :-
-    nl, writeln('Cuantas calorias maximas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    nl, writeln('¿Cuantas calorias maximas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
     input_string(Respuesta),
     compareMaxcalorias(Respuesta, Maxcalorias).
 
 % Pregunta sobre calorias minimas
 preguntar_mincalorias(Mincalorias) :-
-    nl, writeln('Cuantas calorias minimas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    nl, writeln('¿Cuantas calorias minimas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
     input_string(Respuesta),
     compareMincalorias(Respuesta, Mincalorias).
 
 % Pregunta sobre la frecuencia de actividad fisica
 preguntar_frecuencia(Frecuencia) :-
-    nl, writeln('Con que nivel de frecuencia realizas actividad fisica?'),
+    nl, writeln('¿Con que nivel de frecuencia realiza actividad fisica?'),
     nl, writeln('inicial: 0-2 veces por semana'),
     nl, writeln('intermedio: 3-4 veces por semana'),
     nl, writeln('avanzado: 5 o mas veces por semana'),
@@ -221,7 +246,7 @@ preguntar_frecuencia(Frecuencia) :-
 
 % Pregunta sobre el tipo de dieta
 preguntar_tipo_dieta(TipoDieta) :-
-    nl, writeln('Que tipo de dieta prefieres? (Ejemplo: vegetariana)'),
+    nl, writeln('¿Que tipo de dieta prefiere? (Ejemplo: vegetariana)'),
     input_string(Respuesta),
     compareTipoDieta(Respuesta, TipoDieta).
 
@@ -281,5 +306,4 @@ ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia,
 % Regla principal de inicio del programa
 inicio :-
 	detectar_saludo().
-	
-	
+
