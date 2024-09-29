@@ -3,32 +3,8 @@
 % Sección que contiene la clasificación de palabras según su función en la oración escrita.
 
 
-%Comienzo de conversacion con bot
-start([hola]).
-start(['Hola']).
-start([iniciar]).
-start([buenos, dias]).
-start(['Buenos', dias]).
-start([buenas, tardes]).
-start(['Buenas', tardes]).
-start([buenas, noches]).
-start(['Buenas', noches]).
-start([nutritec]).
 
-%Finalizacion de conversacion con bot
-end([gracias]).
-end([muchas, gracias]).
-end([adios]).
-end([chao]).
-end([hasta, luego]).
-
-%Respuesta negatoria
-neg([no|X],X).
-neg(['No'|X],X).
-neg([nada|X],X).
-neg(['Nada'|X],X).
-
-%Respuesta afirmatoria
+% Respuesta afirmatoria
 afirm([si|X],X).
 afirm(['Si'|X],X).
 
@@ -62,6 +38,7 @@ nombre([H|X], X) :- number(H).
 % Sección que evalúa los posibles verbos que puede usar la oración, en este nutritec, chequea si el usuario está hablando en primera persona singular.
 
 verbo([quiero|X],X).
+verbo([prefiero|X],X).
 verbo([tengo|X],X).
 verbo([siento|X],X).
 verbo([estoy|X],X).
@@ -76,10 +53,12 @@ verbo([requiero|X],X).
 verbo([pido|X],X).
 verbo([consumo|X],X).
 verbo([soy|X],X).
+verbo([sean|X],X).
 verbo([me, gustaria|X],X).
 verbo([me, diagnosticaron|X],X).
 
 verbo(['Quiero'|X],X).
+verbo(['Consumo'|X],X).
 verbo(['Tengo'|X],X).
 verbo(['Siento'|X],X).
 verbo(['Estoy'|X],X).
@@ -94,6 +73,7 @@ verbo(['Requiero'|X],X).
 verbo(['Pido'|X],X).
 verbo(['Consumo'|X],X).
 verbo(['Soy'|X],X).
+verbo(['Sean'|X],X).
 verbo(['Me', diagnosticaron|X],X).
 verbo(['Me', gustaria|X],X).
 
@@ -103,7 +83,8 @@ verbo(['Me', gustaria|X],X).
 oracion(X, Y):- sintagma_nominal(X,A), sintagma_verbal(A,Y).
 oracion(X, Y):- sintagma_verbal_2(X,Y).
 
-%Se chequea el sujeto de la oración
+
+% Se chequea el sujeto de la oración
 
 sintagma_nominal(X,Y):- determinante(X,A), nombre(A,Y).
 sintagma_nominal(X,Y):- determinante(X,A), nombre(A,B), nombre(B,Y).
@@ -111,12 +92,15 @@ sintagma_nominal(X,Y):- nombre(X,Y).
 sintagma_nominal(X,Y):- nombre(X,A), nombre(A,Y).
 sintagma_nominal(X,Y):- nombre(X,A), nombre(A,B), nombre(B,Y).
 
-%Se chequea el predicado de la oración si esta tiene un sujeto previo.
+
+% Se chequea el predicado de la oración si esta tiene un sujeto previo.
 
 sintagma_verbal(X,Y):- verbo(X,Y).
 sintagma_verbal(X,Y):- verbo(X,A), sintagma_nominal(A,Y).
 
-%Se chequea el predicado de la oración si esta tiene un sujeto previo.
+
+% Se chequea el predicado de la oración si esta tiene un sujeto previo.
+
 sintagma_verbal_2(X,Y):- verbo(X,A), sintagma_nominal(A,Y).
 
 verificar_oracion(Oracion) :- oracion(Oracion, []), !.
