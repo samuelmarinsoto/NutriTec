@@ -1,14 +1,13 @@
 :- style_check(-singleton).
 
-% Sección que contiene la clasificación de palabras según su función en la oración escrita.
+% Sección que clasifica palabras según su función en la oración escrita.
 
-
-
-% Respuesta afirmatoria
+% Respuesta afirmativa
 afirm([si|X],X).
 afirm(['Si'|X],X).
 
-% Sección que evalúa los posibles determinantes que puede usar la oración, en este nutritec, chequea si el usuario está hablando en primera persona singular.
+% Sección que evalúa los posibles determinantes en la oración.
+% En este contexto (Nutritec), chequea si el usuario habla en primera persona singular.
 
 determinante([yo|X],X).
 determinante(['Yo'|X],X).
@@ -29,13 +28,13 @@ determinante(['Un'|X],X).
 determinante([unos|X],X).
 determinante(['Unos'|X],X).
 
-
-% Cualquier nombre de cualquier cosa que esté en la oración.
+% Nombres que aparecen en la oración, pueden ser cualquier cosa o número.
 
 nombre([_|X],X).
 nombre([H|X], X) :- number(H).
 
-% Sección que evalúa los posibles verbos que puede usar la oración, en este nutritec, chequea si el usuario está hablando en primera persona singular.
+% Sección que evalúa los posibles verbos en la oración.
+% En este contexto (Nutritec), verifica si el usuario habla en primera persona singular.
 
 verbo([quiero|X],X).
 verbo([prefiero|X],X).
@@ -77,14 +76,14 @@ verbo(['Sean'|X],X).
 verbo(['Me', diagnosticaron|X],X).
 verbo(['Me', gustaria|X],X).
 
-
-% Aquí, se chequea si la oración tiene la estructura de una oración, primero un sujeto y luego un predicado. Sino, que tenga un predicado con un verbo que reemplace al sujeto.
+% Estructura de la oración.
+% Verifica si la oración tiene primero un sujeto y luego un predicado, 
+% o si tiene un predicado con un verbo que sustituye al sujeto.
 
 oracion(X, Y):- sintagma_nominal(X,A), sintagma_verbal(A,Y).
 oracion(X, Y):- sintagma_verbal_2(X,Y).
 
-
-% Se chequea el sujeto de la oración
+% Verifica el sujeto de la oración
 
 sintagma_nominal(X,Y):- determinante(X,A), nombre(A,Y).
 sintagma_nominal(X,Y):- determinante(X,A), nombre(A,B), nombre(B,Y).
@@ -92,18 +91,17 @@ sintagma_nominal(X,Y):- nombre(X,Y).
 sintagma_nominal(X,Y):- nombre(X,A), nombre(A,Y).
 sintagma_nominal(X,Y):- nombre(X,A), nombre(A,B), nombre(B,Y).
 
-
-% Se chequea el predicado de la oración si esta tiene un sujeto previo.
+% Verifica el predicado de la oración cuando tiene un sujeto previo.
 
 sintagma_verbal(X,Y):- verbo(X,Y).
 sintagma_verbal(X,Y):- verbo(X,A), sintagma_nominal(A,Y).
 
-
-% Se chequea el predicado de la oración si esta tiene un sujeto previo.
+% Verifica el predicado de la oración cuando no tiene un sujeto explícito previo.
 
 sintagma_verbal_2(X,Y):- verbo(X,A), sintagma_nominal(A,Y).
 
-verificar_oracion(Oracion) :- oracion(Oracion, []), !.
+% Verificación de la oración completa
 
+verificar_oracion(Oracion) :- oracion(Oracion, []), !.
 verificar_oracion(Oracion) :-
-    nl, writeln('Lo siento, no entendi lo que quiso escribir.'), false.
+    nl, writeln('Lo siento, no entendí lo que quiso escribir.'), false.
