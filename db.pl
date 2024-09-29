@@ -32,10 +32,17 @@ saludos(hola).
 saludos('Hola').
 saludos(buenos).
 saludos(buenas).
+saludos(ocupo).
+saludos(necesito).
 
+% ??????????????
 despedidas(gracias).
 despedidas(adios).
 despedidas(no).
+despedidas(muchas).
+despedidas(estoy).
+despedidas(bien).
+
 
 
 % 24 desayunos

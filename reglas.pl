@@ -64,10 +64,10 @@ eliminar_puntuacion(X, Y) :-
     atom_chars(X, Chars),
     (   last(Chars, '.') 
     ->  elim(Chars, InitChars),  % Elimina el punto al final de la oracion
-        atom_chars(Y, InitChars)  % Crear un nuevo átomo sin el punto
+        atom_chars(Y, InitChars)  % Crear un nuevo atomo sin el punto
     ;   Y = X).  % Si no hay un punto, simplemente se devuelve el atomo que ya se tenia antes.
 
-% Hechos para obtener todos los caracteres excepto el último
+% Hechos para obtener todos los caracteres excepto el ultimo
 elim([], []).  
 elim([_], []).  
 elim([H|T], [H|I]) :- elim(T, I).  
@@ -80,7 +80,6 @@ prefijo(I, [L|T]) :-
 % Funciones para validar la entrada del usuario en distintas categorias.
 
 % Regla para validar el padecimiento
-
 comparePadecimientos(X, Padecimiento) :-  
     eliminar_puntuacion(X, Y),
     atomic_list_concat(A, ' ', Y), 
@@ -101,7 +100,7 @@ compareMaxcalorias(X, Calorias) :-
         number(Calorias),  
         Calorias >= 1260, 
         Calorias =< 1970 
-    ->  !  % Si las calorías son válidas, continúa
+    ->  !  % Si las calorias son validas, continua
     ;   % Si no es válido, vuelve a preguntar
         nl, writeln('Por favor, ingrese una cantidad válida de calorías.'), nl,
         preguntar_maxcalorias(Calorias)  
@@ -122,7 +121,6 @@ compareMincalorias(X, Calorias) :-
     ).
 
 % Regla que se encarga de encontrar un numero en la oracion.
-
 buscar_numero([], _) :- fail. 
 buscar_numero([H|_], Num) :- 
     atom_number(H, Num),  
@@ -168,7 +166,7 @@ compareSaludo(X, Saludo) :-
         detectar_saludo() 
     ).
 
-% Regla para validar despedida
+% Regla para validar despedidas
 compareDespedida(X, Despedida) :-
     eliminar_puntuacion(X, Y),
     atomic_list_concat(A, ' ', Y),
@@ -226,14 +224,8 @@ preguntar_tipo_dieta(TipoDieta) :-
     nl, writeln('Que tipo de dieta prefieres? (Ejemplo: vegetariana)'),
     input_string(Respuesta),
     compareTipoDieta(Respuesta, TipoDieta).
-    
-detectar_despedida :-
-	input_string(Respuesta),
-	(compareDespedida(Respuesta, Despedida) % true si usuario quiere salir, false si no
-	-> nl, writeln('Entendido, hasta luego!')
-	; nl, writeln('Vamos a empezar de cero'), inicio()
-	).
 
+% Detecta el saludo del usuario y empieza el bot
 detectar_saludo :-
 	input_string(Respuesta),
 	(compareSaludo(Respuesta, Saludo) % true si usuario esta saludando inicia funcion, false cicla esperando una respuesta
@@ -243,6 +235,15 @@ detectar_saludo :-
 	ingresar_datos(_, _, _, _, _, _, _)
 	; nl, writeln('Disculpe, no le logre entender. Puede replantear su peticion?'), detectar_saludo()
 	).
+
+% Detecta si el usuario quiere terminar o continuar la conversacion con el bot  
+detectar_despedida :-
+	input_string(Respuesta),
+	(compareDespedida(Respuesta, Despedida) % true si usuario quiere salir, false si no
+	-> nl, writeln('Entendido, hasta luego!')
+	; nl, writeln('Vamos a empezar de cero entonces(salude nuevamente a NutriTec)'), inicio()
+	).
+
 
 
 % Regla de ingreso de datos y ejecucion del flujo
