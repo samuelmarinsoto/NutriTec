@@ -187,7 +187,7 @@ compareSaludo(X, Saludo) :-
     (   Coincidencias \= []
     ->  [Saludo | _] = Coincidencias,  
         !  
-    ;   nl, writeln('Digame hola porque no breteo si no me saludan'), nl,
+    ;   nl, writeln('No vas a saludar?'), nl,
         detectar_saludo() 
     ).
 
@@ -219,25 +219,25 @@ listaTipoDieta(L) :- findall(X, tipo_dieta(X), L).
 
 % Pregunta sobre padecimientos
 preguntar_padecimiento(Padecimiento) :-
-    nl, writeln('¿Tiene algun padecimiento? (Ejemplo: hipertension)'),
+    nl, writeln('Tiene algun padecimiento? (Ejemplo: hipertension)'),
     input_string(Respuesta), 
     comparePadecimientos(Respuesta, Padecimiento).
 
 % Pregunta sobre calorias maximas
 preguntar_maxcalorias(Maxcalorias) :-
-    nl, writeln('¿Cuantas calorias maximas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    nl, writeln('Cuantas calorias maximas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
     input_string(Respuesta),
     compareMaxcalorias(Respuesta, Maxcalorias).
 
 % Pregunta sobre calorias minimas
 preguntar_mincalorias(Mincalorias) :-
-    nl, writeln('¿Cuantas calorias minimas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
+    nl, writeln('Cuantas calorias minimas diarias puede consumir? (Minimo: 1260, Maximo: 1970)'),
     input_string(Respuesta),
     compareMincalorias(Respuesta, Mincalorias).
 
 % Pregunta sobre la frecuencia de actividad fisica
 preguntar_frecuencia(Frecuencia) :-
-    nl, writeln('¿Con que nivel de frecuencia realiza actividad fisica?'),
+    nl, writeln('Con que nivel de frecuencia realiza actividad fisica?'),
     nl, writeln('inicial: 0-2 veces por semana'),
     nl, writeln('intermedio: 3-4 veces por semana'),
     nl, writeln('avanzado: 5 o mas veces por semana'),
@@ -246,7 +246,7 @@ preguntar_frecuencia(Frecuencia) :-
 
 % Pregunta sobre el tipo de dieta
 preguntar_tipo_dieta(TipoDieta) :-
-    nl, writeln('¿Que tipo de dieta prefiere? (Ejemplo: vegetariana)'),
+    nl, writeln('Que tipo de dieta prefiere? (Ejemplo: vegetariana)'),
     input_string(Respuesta),
     compareTipoDieta(Respuesta, TipoDieta).
 
@@ -266,7 +266,7 @@ detectar_despedida :-
 	input_string(Respuesta),
 	(compareDespedida(Respuesta, Despedida) % true si usuario quiere salir, false si no
 	-> nl, writeln('Entendido, hasta luego!')
-	; nl, writeln('Vamos a empezar de cero entonces(salude nuevamente a NutriTec)'), inicio()
+	; nl, writeln('Excelente. Saludame cuando estes listo.'), inicio()
 	).
 
 
