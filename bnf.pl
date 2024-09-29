@@ -74,6 +74,8 @@ verbo([padezco|X],X).
 verbo([sufro|X],X).
 verbo([requiero|X],X).
 verbo([pido|X],X).
+verbo([consumo|X],X).
+verbo([soy|X],X).
 verbo([me, gustaria|X],X).
 verbo([me, diagnosticaron|X],X).
 
@@ -90,6 +92,8 @@ verbo(['Padezco'|X],X).
 verbo(['Sufro'|X],X).
 verbo(['Requiero'|X],X).
 verbo(['Pido'|X],X).
+verbo(['Consumo'|X],X).
+verbo(['Soy'|X],X).
 verbo(['Me', diagnosticaron|X],X).
 verbo(['Me', gustaria|X],X).
 

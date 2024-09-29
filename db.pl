@@ -41,11 +41,9 @@ despedidas(gracias).
 despedidas(adios).
 despedidas(no).
 despedidas(muchas).
-despedidas(luego)
+despedidas(luego).
 despedidas(estoy).
 despedidas(bien).
-
-
 
 % 24 desayunos
 comida(desayuno1, 250, desayuno, [inicial, intermedio, avanzado], 
