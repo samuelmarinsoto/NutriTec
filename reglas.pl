@@ -155,12 +155,42 @@ compareTipoDieta(X, TipoDieta) :-
         preguntar_tipo_dieta(TipoDieta)  
     ).
 
-compareDespedida(X) :-
+% Regla para validar saludos
+compareSaludo(X, Saludo) :-
+    eliminar_puntuacion(X, Y),
+    atomic_list_concat(A, ' ', Y), 
+    listaSaludos(L),
+    findall(P, (member(P, L), member(P, A)), Coincidencias),
+    (   Coincidencias \= []
+    ->  [Saludo | _] = Coincidencias,  
+        !  
+    ;   nl, writeln('Digame hola porque no breteo si no me saludan'), nl,
+        detectar_saludo() 
+    ).
+
+% Regla para validar despedida
+compareDespedida(X, Despedida) :-
+    eliminar_puntuacion(X, Y),
+    atomic_list_concat(A, ' ', Y),
+    listaDespedidas(L),
+    findall(P, (member(P, L), member(P, A)), Coincidencias),
+    Coincidencias \= [],
+    [Despedida | _] = Coincidencias.
+%    (   Coincidencias \= []
+%    ->  [Despedida | _] = Coincidencias,  
+%        !  
+%    ;   nl, writeln('No reconozco ese tipo de dieta, intentelo de nuevo.'), nl,
+%        preguntar_tipo_dieta(TipoDieta)  
+%    ).
+
 
 % Listas para validar las entradas
+listaSaludos(L) :- findall(X, saludos(X), L).
+listaDespedidas(L) :- findall(X, despedidas(X), L).
 listaTipoDePadecimientos(L) :- findall(X, padecimiento(X), L).
 listaFrecuencia(L) :- findall(X, nivel_actividad(X, _), L).
 listaTipoDieta(L) :- findall(X, tipo_dieta(X), L).
+
 
 % Preguntas especificas al usuario
 
@@ -199,29 +229,31 @@ preguntar_tipo_dieta(TipoDieta) :-
     
 detectar_despedida :-
 	input_string(Respuesta),
-	(compareDespedida(Respuesta) % true si usuario quiere salir, false si no
+	(compareDespedida(Respuesta, Despedida) % true si usuario quiere salir, false si no
 	-> nl, writeln('Entendido, hasta luego!')
-	; inicio()
+	; nl, writeln('Vamos a empezar de cero'), inicio()
 	).
 
 detectar_saludo :-
 	input_string(Respuesta),
-	(compareSaludo(Respuesta) % true si usuario esta saludando inicia funcion, false cicla esperando una respuesta
+	(compareSaludo(Respuesta, Saludo) % true si usuario esta saludando inicia funcion, false cicla esperando una respuesta
 	-> nl, writeln('Bienvenido a NutriTEC! En que le podemos ayudar hoy?'),
 	input_string(MeValeGorra),
 	nl, writeln('Claro, con gusto le ayudaremos con eso. Le recomendaremos una dieta que se ajuste a sus necesidades. Para seguir, cuentenos un poco de usted.'),
 	ingresar_datos(_, _, _, _, _, _, _)
 	; nl, writeln('Disculpe, no le logre entender. Puede replantear su peticion?'), detectar_saludo()
 	).
-	
+
+
 % Regla de ingreso de datos y ejecucion del flujo
 % Hace preguntas al usuario para extraer informacion de el o ella, y hace una consulta con la regla plan_diario/5
 % para obtener un plan diario adecuado.
 % Input: 7 variables vacias
 % Output: plan diario de dieta
 % Debug: descomentar format/2 para ver respuestas obtenidas del usuario que pasaran a la regla plan_diario/5
+
 ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia, TipoDieta, MenuDieta) :-
-	
+    
     % Preguntar sobre el padecimiento
     preguntar_padecimiento(Padecimientos),
 
@@ -237,12 +269,12 @@ ingresar_datos(NombreDieta, Padecimientos, Maxcalorias, Mincalorias, Frecuencia,
     % Preguntar sobre el tipo de dieta
     preguntar_tipo_dieta(TipoDieta),
 
-	%format('~w, ~w, ~w, ~w, ~w~n', [Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta]),
+	% format('~w, ~w, ~w, ~w, ~w~n', [Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta]),
     % Buscar dieta en base de datos
 	(plan_diario(Mincalorias, Maxcalorias, Frecuencia, Padecimientos, TipoDieta)
 	-> nl, writeln('Gracias por usar NutriTec! Necesita mas ayuda?')
 	; nl, writeln('Lo lamentamos, pero no se pudo encontrar una dieta adecuada en la base de datos. Desea intentar de nuevo?'))
-	),
+	,
 	detectar_despedida().
 
 % Regla principal de inicio del programa

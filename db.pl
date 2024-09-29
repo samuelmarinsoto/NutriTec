@@ -27,6 +27,17 @@ nivel_actividad(inicial, "0-2 veces por semana").
 nivel_actividad(intermedio, "3-4 veces por semana").
 nivel_actividad(avanzado, "5 o más veces por semana").
 
+% saludos
+saludos(hola).
+saludos('Hola').
+saludos(buenos).
+saludos(buenas).
+
+despedidas(gracias).
+despedidas(adios).
+despedidas(no).
+
+
 % 24 desayunos
 comida(desayuno1, 250, desayuno, [inicial, intermedio, avanzado], 
 	[baja_en_grasas, vegetariana, dash, mediterranea, sin_gluten, flexitariana], 
